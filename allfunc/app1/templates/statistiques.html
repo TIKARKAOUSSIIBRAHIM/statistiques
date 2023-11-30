@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <title>Mon premier site python statistiques</title>
+</head>
+<body>
+
+    <h2>Upload a File</h2>
+
+    <form method="post" enctype="multipart/form-data" action="{% url 'statistiques' %}" >
+        {% csrf_token %}
+        {{ form.as_p }} 
+        
+        <fieldset>      
+            <legend>choisissez</legend>      
+            <input type="checkbox"  name="stats_values" value="1">5 première ligne<br>      
+            <input type="checkbox"  name="stats_values" value="2">5 dernière ligne<br>   
+            <input type="checkbox"  name="stats_values" value="3">Afficher les nom de colonnes<br>                 
+            <br>      
+                
+        </fieldset>
+           <label>ligne à afficher</label><input type="number" name="stats" ><br> 
+           <label>Intervalle de ligne</label><input type="number" name="statsd" >
+           <label>de</label><input type="number" name="statsf" ><br> 
+            
+
+        <input type="submit" value="Upload">
+    </form>
+
+    {% if tab is not None and not tab.empty and tab.shape.0 > 0 %}        <h2>{{ name }}</h2>
+        <table border="1">
+            <tr>
+                {% for col in tab.columns %}
+                    <th>{{ col }}</th>
+                {% endfor %}
+            </tr>
+            {% for index, row in tab.iterrows %}
+                <tr>
+                    {% for value in row %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    {% if liste is not None and not res.empty%}
+    
+    <h1>List des Colonnes</h1>
+
+    <ul>
+        {% for column_name in liste  %}
+            <li>{{ column_name }}</li>
+        {% endfor %}
+    </ul>
+
+    {% endif %}
+    
+    
+    {% if ligne is not None and not res.empty%}
+    
+    <h1>la ligne</h1>
+    <ul>
+        {% for column, value in ligne.items %}
+            <li><strong>{{ column }}</strong>: {{ value }}</li>
+        {% endfor %}
+    </ul>
+    </ul>
+    
+    {% endif %}
+
+    {% if lignes is not None and not res.empty%}
+
+    <h1>Lignes spécifiques (Les indexes: {{ lignes.index.min }} - {{ lignes.index.max }})</h1>
+
+    {% for index, row in lignes.iterrows %}
+
+        <h2>Ligne Index: {{ index }}</h2>
+        <ul>
+            {% for column, value in row.items %}
+                <li><strong>{{ column }}</strong>: {{ value }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+
+    {% endif %}
+
+</body>
+</html>

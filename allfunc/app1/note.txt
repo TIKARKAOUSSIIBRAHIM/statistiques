@@ -1,0 +1,98 @@
+
+def fichierLirepython(request):
+    if request.method == 'POST':
+        form = FileUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            uploaded_file = form.cleaned_data['file']
+            print("Uploaded file name:", uploaded_file.name)
+            print("Uploaded file size:", uploaded_file.size)
+
+            try:
+                df = pd.read_csv(uploaded_file)
+                request.session['my_df'] = df.to_dict()
+                print("Data read from CSV file:")
+                print(df.head())
+                df_json = df.to_dict()
+                request.session['my_df'] = df_json
+            except Exception as e:
+                print("Error reading file:", str(e))
+    else:
+        form = FileUploadForm()
+    return render(request, 'fichier.html',{'form':form})
+
+def file_upload_view(request):
+                file_name = None  # Initialize with a default value
+                plot_url = None 
+                plot = None  
+                df_json = request.session.get('my_df')
+                df = pd.DataFrame.from_dict(df_json)
+
+                print(df.columns)
+              
+                
+        # Convertir le dictionnaire en DataFrame
+                
+    
+                 
+                                
+                if request.method == 'POST':
+            
+                    selected_graph = request.POST.get('graph')
+                    val1 = request.POST.get('val1')
+                    val2 = request.POST.get('val2')
+                    
+                
+                    
+
+                    sns.set(style="whitegrid")
+                    if selected_graph == '1' : 
+                            plot= sns.lineplot(x=val1,y=val2,data=df,markers='o')
+                            plot.set_xlabel=val1
+                            plot.set_ylabel=val2
+                    if selected_graph == '2' : 
+                            plot = sns.scatterplot(x=val1, y=val2, data=df, marker='o', s=50)                          
+                            plot.set_xlabel=val1
+                            plot.set_ylabel=val2
+
+                    if selected_graph == '3' : 
+                            plot= sns.boxplot(x=val1,y=val2,data=df)
+                            plot.set_xlabel=val1
+                            plot.set_ylabel=val2
+                    if selected_graph == '4' : 
+                            plot= sns.histplot(x=val1,data=df)  
+                            plot.set_xlabel=val1
+                    if selected_graph == '5' : 
+                            plot= sns.kdeplot(x=val1,data=df)     
+                            plot.set_xlabel=val1  
+                    if selected_graph == '6' : 
+                            plot= sns.violinplot(x=val1,data=df)   
+                            plot.set_xlabel=val1  
+
+                    if selected_graph == '7' : 
+                            plot= sns.barplot(x=val1,y=val2,data=df)  
+                            plot.set_xlabel=val1
+                            plot.set_ylabel=val2    
+                    if selected_graph == '8' : 
+                            dff = df.select_dtypes(include=['number'])
+                            correlation_matrix = dff.corr()
+                            plot=sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm")
+                            plt.title('Heatmap')
+                    if selected_graph == '9' : 
+                            category_counts = df[val1].value_counts()
+                            plot=plt.pie(category_counts, labels=category_counts.index, autopct='%1.1f%%', startangle=140)
+
+        # Save the plot as an image  
+                
+                # Save the plot as an image (you can save it to a file or encode it as base64)
+                    buffer = io.BytesIO()
+                    
+                    buffer.seek(0)
+                    image_png = buffer.getvalue()
+                    buffer.close()
+                    # Close all     Matplotlib figuliste to clear the state
+                 
+                    # Encode the plot to base64
+                    plot_url = base64.b64encode(image_png).decode('utf-8')
+
+
+                return render(request, 'python.html', { 'file_name': file_name, 'plot_url': plot_url})

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Uploaded File Visualization</title>
+</head>
+<body>
+    <style>
+        /* Optional: Add some styling for better visibility */
+        .hiddenInput {
+            display: none;
+        }
+    </style>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {{ form }}
+        <button type="submit">Upload</button>
+    </form>
+
+</body>
+</html>

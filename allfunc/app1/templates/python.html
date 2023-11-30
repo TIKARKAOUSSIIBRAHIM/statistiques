@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Uploaded File Visualization</title>
+</head>
+<body>
+    <style>
+        /* Optional: Add some styling for better visibility */
+        .hiddenInput {
+            display: none;
+        }
+    </style>
+
+
+    <form method="post" enctype="multipart/form-data" >
+        {% csrf_token %}
+ 
+        
+        <fieldset>      
+            <legend>choisissez</legend>      
+            <input type="checkbox" class="showInputCheckbox" name="graph" value="1">line plot<br>      
+            <input type="checkbox" class="showInputCheckbox" name="graph" value="2">Scatter plot<br>      
+            <input type="checkbox" class="showInputCheckbox" name="graph" value="3">Boxplot<br>      
+            <input type="checkbox" class="showInputCheckbox" name="graph" value="4">Histogram<br>      
+            <input type="checkbox" class="showInputCheckbox"  name="graph" value="5">KDE plot<br>      
+            <input type="checkbox" class="showInputCheckbox" name="graph" value="6">Violin plot<br> 
+            <input type="checkbox" class="showInputCheckbox" name="graph" value="7">Bar plot<br>
+            <input type="checkbox" class="showInputCheckbox"  name="graph" value="8">Heatmap<br>
+            <input type="checkbox" class="showInputCheckbox"  name="graph" value="9">Pie chart<br>
+            <br>      
+                
+        </fieldset> 
+            <input type="text" class="hiddenInput" name="val1" >parametre 1<br>
+            <input type="text" class="hiddenInput" name="val2" >parametre 2<br>
+        
+        <input type="submit" value="Upload">
+    </form> 
+    {% if plot_url %}
+    <img src="data:image/png;base64, {{ plot_url }}" alt="Generated Plot">
+{% else %}
+    <p>No plot available</p>
+{% endif %}
+    {% if plot_url %}
+        <h2>Uploaded File Visualization</h2>
+        <img src="data:image/png;base64,{{ plot_url }}" alt="Seaborn Plot">
+    {% endif %}
+  
+    {% if not df_head.empty %}
+    <h2>Les 5 premier lignes du fichier</h2>
+    <table border="1">
+        <tr>
+            {% for col in df_head.columns %}
+                <th>{{ col }}</th>
+            {% endfor %}
+        </tr>
+        {% for index, row in df_head.iterrows %}
+            <tr>
+                {% for value in row %}
+                    <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+    <script>
+        // Get the checkbox and input elements by their IDs
+        const showInputCheckboxes = document.getElementsByClassName('showInputCheckbox');
+        const hiddenInputs = document.getElementsByClassName('hiddenInput');
+
+
+        for (let i = 0; i < showInputCheckboxes.length; i++) {
+            // Add an event listener to each checkbox to toggle the input visibility
+            showInputCheckboxes[i].addEventListener('change', function() {
+                // Loop through all elements with the class name 'hiddenInput'
+            for (let j = 0; j < hiddenInputs.length; j++) {
+                 hiddenInputs[j].style.display = this.checked ? 'block' : 'none';
+            }
+    });
+}
+
+    </script>
+    <h1>Generated Graph</h1>
+    {% if plot_url %}
+        <img src="data:image
+        
+        
+        /png;base64, {{ plot_url }}" alt="Generated Graph">
+    {% else %}
+        <p>No graph available</p>
+    {% endif %} 
+</body>
+{% comment %} python manage.py runserver {% endcomment %}
+</html>
